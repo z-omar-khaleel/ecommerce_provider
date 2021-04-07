@@ -14,7 +14,8 @@ class BuildGridViewProductItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productData = Provider.of<ProductInfo>(context);
-    products = isFav ? productData.faviorteProduct : productData.productItems;
+    products =
+        (isFav ? productData.faviorteProduct : productData.productItems)!;
 
     return GridView.builder(
         itemCount: products.length,

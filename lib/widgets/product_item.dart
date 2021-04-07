@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:max_ecommerce/models/providers/auth.dart';
 import 'package:max_ecommerce/models/providers/cart.dart';
 import 'package:max_ecommerce/models/providers/product.dart';
 import 'package:max_ecommerce/screens/details_screen.dart';
@@ -11,7 +12,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Product product = Provider.of<Product>(context, listen: false);
     final Cart cart = Provider.of<Cart>(context, listen: false);
-    print(product.id);
+    final Auth auth = Provider.of<Auth>(context, listen: false);
     return GestureDetector(
       onTap: () {
         Navigator.of(context)
@@ -57,7 +58,7 @@ class ProductItem extends StatelessWidget {
                     ? Icons.favorite
                     : Icons.favorite_outline_rounded),
                 onPressed: () {
-                  product1.toggleIsFaviorteState();
+                  product1.toggleIsFaviorteState(auth.getToken, auth.getUserId);
                 },
               ),
             ),

@@ -41,17 +41,7 @@ class CartScreen extends StatelessWidget {
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   // ignore: deprecated_member_use
-                  FlatButton(
-                      onPressed: () {
-                        Provider.of<Orders>(context, listen: false).addOrder(
-                            providerData.cartItems.values.toList(),
-                            providerData.totalAmount);
-                        providerData.clearCart();
-                      },
-                      child: Text(
-                        'ORDER NOW',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      ))
+                  FlatButtomOrder(providerData: providerData)
                 ],
               ),
             ),
@@ -75,5 +65,47 @@ class CartScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class FlatButtomOrder extends StatefulWidget {
+  const FlatButtomOrder({
+    Key? key,
+    required this.providerData,
+  }) : super(key: key);
+
+  final Cart providerData;
+
+  @override
+  _FlatButtomOrderState createState() => _FlatButtomOrderState();
+}
+
+class _FlatButtomOrderState extends State<FlatButtomOrder> {
+  bool isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
+    return isLoading
+        ? CircularProgressIndicator()
+        // ignore: deprecated_member_use
+        : FlatButton(
+            onPressed: (widget.providerData.totalAmount <= 0 || isLoading)
+                ? null
+                : () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await Provider.of<Orders>(context, listen: false).addOrder(
+                        widget.providerData.cartItems.values.toList(),
+                        widget.providerData.totalAmount);
+                    setState(() {
+                      isLoading = false;
+                    });
+                    widget.providerData.clearCart();
+                  },
+            child: Text(
+              'ORDER NOW',
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ));
   }
 }

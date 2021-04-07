@@ -7,9 +7,13 @@ import 'package:provider/provider.dart';
 
 class UserProductScreen extends StatelessWidget {
   static const routeName = 'UserProductScreen';
+  Future<void> _refreshProduct(BuildContext context) async {
+    await Provider.of<ProductInfo>(context, listen: false).getProductWeb(true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final products = Provider.of<ProductInfo>(context).productItems;
+    print('rebuilding');
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
@@ -22,15 +26,29 @@ class UserProductScreen extends StatelessWidget {
               })
         ],
       ),
-      body: ListView.builder(
-        itemBuilder: (_, index) {
-          return UserProductItem(
-            title: products[index].title,
-            imgUrl: products[index].imageUrl,
-            id: products[index].id,
-          );
+      body: FutureBuilder(
+        future: _refreshProduct(context),
+        builder: (_, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return Center(child: CircularProgressIndicator());
+          if (snapshot.connectionState == ConnectionState.done)
+            return RefreshIndicator(
+              onRefresh: () => _refreshProduct(context),
+              child: Consumer<ProductInfo>(
+                builder: (c, products, _) => ListView.builder(
+                  itemBuilder: (_, index) {
+                    return UserProductItem(
+                      title: products.productItems![index].title,
+                      imgUrl: products.productItems![index].imageUrl,
+                      id: products.productItems![index].id,
+                    );
+                  },
+                  itemCount: products.productItems!.length,
+                ),
+              ),
+            );
+          return Center(child: Text('An Error Occurred'));
         },
-        itemCount: products.length,
       ),
     );
   }
