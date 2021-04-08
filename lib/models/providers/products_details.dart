@@ -16,6 +16,7 @@ class ProductInfo with ChangeNotifier {
 
   String? token;
   String? userId;
+  bool isInit = true;
   List<Product> _products = [];
 
   List<Product>? get productItems {
@@ -54,7 +55,8 @@ class ProductInfo with ChangeNotifier {
         });
 
         _products = _productsItems;
-        notifyListeners();
+        if (isInit) notifyListeners();
+        isInit = false;
       }
     } on Exception catch (e) {
       // TODO
